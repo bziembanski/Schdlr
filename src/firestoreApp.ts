@@ -4,3 +4,5 @@ import secrets from "./secrets";
 const firebaseConfig = secrets.firebase;
 
 const app = initializeApp(firebaseConfig);
+
+export default app
