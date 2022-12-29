@@ -2,8 +2,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import {
   useAuthState,
-  useSignInWithEmailAndPassword,
-  useSignInWithGoogle,
+  useCreateUserWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
 
 import Button from "../components/Button";
@@ -14,27 +13,20 @@ import { getAuth } from "@firebase/auth";
 
 const auth = getAuth(firestoreApp);
 
-const Auth = () => {
+const SignUp = () => {
   const [user] = useAuthState(auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [signInWithEmailAndPassword, _user, _loading, error] =
-    useSignInWithEmailAndPassword(auth);
+  const [createUser, _user, loading, error] =
+    useCreateUserWithEmailAndPassword(auth);
   const navigate = useNavigate();
-
-  const [signInWithGoogle] = useSignInWithGoogle(auth);
 
   if (user) return <Navigate to="/" />;
 
   return (
     <div className="w-full h-full flex justify-center items-center">
       <div className="w-1/3 h-auto p-10 bg-blue-dark rounded-3xl flex justify-center flex-col gap-3 items-center">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            signInWithEmailAndPassword(email, password);
-          }}
-        >
+        <form onSubmit={() => createUser(email, password)}>
           <TextInput
             label="Email"
             type="email"
@@ -44,27 +36,12 @@ const Auth = () => {
           <TextInput
             label="Password"
             type="password"
-            value={password}
             error={error?.message}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="flex flex-col items-stretch gap-3 mt-3">
+          <div className="flex flex-col items-stretch gap-3">
             <Button className="mw-full md:mw-1/2 " type="submit">
-              Sign In
-            </Button>
-            <Button
-              className="mw-full md:mw-1/2 whitespace-nowrap inline-flex justify-center items-center gap-2"
-              type="button"
-              onClick={() => signInWithGoogle([""])}
-            >
-              <img className="h-[2em] w-auto" src={Google} />
-              Sign In with Google
-            </Button>
-            <Button
-              type="button"
-              className="mw-full md:mw-1/2 "
-              onClick={() => navigate("/signup")}
-            >
               Sign up
             </Button>
           </div>
@@ -74,4 +51,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default SignUp;

@@ -7,4 +7,5 @@ export default defineConfig({
   server: {
     port: 4000,
   },
+  assetsInclude: ["src/assets/**/*"],
 });
