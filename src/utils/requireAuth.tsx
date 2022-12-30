@@ -24,10 +24,13 @@ const RequireAuth: React.FC = () => {
   return (
     <div className="w-full h-full relative">
       <div className="absolute top-0 right-0 flex justify-center items-center gap-5">
-        <span className="text-blue-dark font-bold text-4xl">
-          {user.displayName}
+        <span className="text-blue-dark font-bold text-3xl">
+          {/* {user.uid} */}
+          {user.displayName ?? user.email}
         </span>
-        <button onClick={() => setIsOpen(true)}>{"<"}</button>
+        <button className="h-[1em] text-lg" onClick={() => setIsOpen(true)}>
+          <span className="material-icons text-blue-dark">arrow_back</span>
+        </button>
       </div>
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
         <Button
