@@ -22,10 +22,9 @@ const RequireAuth: React.FC = () => {
     return <Navigate to="/login" />;
   }
   return (
-    <div className="w-full h-full relative">
-      <div className="absolute top-0 right-0 flex justify-center items-center gap-5">
+    <div className="w-full h-full relative flex flex-col">
+      <div className="w-full justify-end flex items-center gap-5">
         <span className="text-blue-dark font-bold text-3xl">
-          {/* {user.uid} */}
           {user.displayName ?? user.email}
         </span>
         <button className="h-[1em] text-lg" onClick={() => setIsOpen(true)}>
