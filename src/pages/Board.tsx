@@ -6,7 +6,13 @@ import Card, {
   MovementMode,
 } from "../components/Card";
 import React, { useEffect, useState } from "react";
-import { collection, doc, getFirestore, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getFirestore,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 import {
   useCollection,
   useDocument,
@@ -27,9 +33,29 @@ type MovementDetails = {
   mode: MovementMode;
 };
 
+const getCardChange = (
+  clientX: number,
+  clientY: number,
+  details: MovementDetails
+): Partial<CardType> => {
+  const { offset, mode } = details;
+
+  const x = clientX - offset.x;
+  const y = clientY - offset.y;
+  if (mode === MovementMode.Moving) {
+    return {
+      position: { x, y },
+    };
+  } else {
+    return {
+      size: { x, y },
+    };
+  }
+};
+
 const Board: React.FC = () => {
   const [user] = useAuthState(auth);
-  const { id } = useParams();
+  const { id = "" } = useParams();
   const [cardsCol] = useCollection(
     query(collection(getFirestore(firestoreApp), `boards/${id}/cards`))
   );
@@ -43,20 +69,11 @@ const Board: React.FC = () => {
 
   const onMouseMove = (e: EventParams) => {
     if (!movementDetails) return;
-    const { offset, id, mode } = movementDetails;
+    const { id } = movementDetails;
     const currentCard = cards.find((card) => card.id === id);
     if (!currentCard) return;
-    const cardChange: Partial<CardType> = {};
 
-    if (mode === MovementMode.Moving) {
-      const x = e.clientX - offset.x;
-      const y = e.clientY - offset.y;
-      cardChange.position = { x, y };
-    } else {
-      const x = e.clientX - offset.x;
-      const y = e.clientY - offset.y;
-      cardChange.size = { x, y };
-    }
+    const cardChange = getCardChange(e.clientX, e.clientY, movementDetails);
 
     setCards((cards) =>
       cards.map((card) => {
@@ -72,6 +89,25 @@ const Board: React.FC = () => {
     setMovementDetails({ id, offset, mode });
   };
 
+  const onCardSelectEnd = async () => {
+    if (!movementDetails) return;
+    syncCard(movementDetails.id);
+    setMovementDetails(undefined);
+  };
+
+  const syncCard = async (cardId: string) => {
+    const card = cards.find((card) => card.id === cardId);
+    if (!card) return;
+    const docRef = doc(
+      getFirestore(firestoreApp),
+      "boards",
+      id,
+      "cards",
+      cardId
+    );
+    updateDoc(docRef, card);
+  };
+
   return (
     <div
       className="w-full h-full relative"
@@ -85,7 +121,7 @@ const Board: React.FC = () => {
           card={card}
           key={card.id}
           onCardSelect={onCardSelect}
-          onSelectEnd={() => setMovementDetails(undefined)}
+          onSelectEnd={onCardSelectEnd}
         />
       ))}
     </div>
