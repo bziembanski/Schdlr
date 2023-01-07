@@ -24,11 +24,14 @@ const RequireAuth: React.FC = () => {
   return (
     <div className="w-full h-full relative flex flex-col">
       <div className="w-full justify-end flex items-center gap-5">
-        <span className="text-blue-dark font-bold text-3xl">
+        <span className="text-blue-dark font-bold text-xl md:text-3xl">
           {user.displayName ?? user.email}
         </span>
-        <button className="h-[1em] text-lg" onClick={() => setIsOpen(true)}>
-          <span className="material-icons text-blue-dark">arrow_back</span>
+        <button
+          className="h-[1em] text-md md:text-lg"
+          onClick={() => setIsOpen(true)}
+        >
+          <span className="material-icons text-blue-dark">menu</span>
         </button>
       </div>
       <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>

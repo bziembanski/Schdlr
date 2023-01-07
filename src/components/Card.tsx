@@ -22,6 +22,7 @@ export type CardProps = {
   card: CardType;
   onSelectEnd: () => void;
   onCardSelect: (id: string, offset: Cords, mode: MovementMode) => void;
+  onDelete: () => void;
 };
 
 export type EventParams = Pick<
@@ -29,7 +30,12 @@ export type EventParams = Pick<
   "clientX" | "clientY" | "target"
 >;
 
-const Card: React.FC<CardProps> = ({ card, onCardSelect, onSelectEnd }) => {
+const Card: React.FC<CardProps> = ({
+  card,
+  onCardSelect,
+  onSelectEnd,
+  onDelete,
+}) => {
   const { id, owner, position, size, text } = card;
   const parentRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,21 +46,22 @@ const Card: React.FC<CardProps> = ({ card, onCardSelect, onSelectEnd }) => {
         React.TouchEvent<HTMLDialogElement | HTMLButtonElement>
     ) => {
       e.stopPropagation();
-      const cords = e.touches ? e.touches[0] : e;
+      const { clientX, clientY } = e.touches ? e.touches[0] : e;
       if (mode === MovementMode.Moving) {
         onCardSelect(
           card.id,
           {
-            x: cords.clientX - e.currentTarget.offsetLeft,
-            y: cords.clientY - e.currentTarget.offsetTop,
+            x: clientX - e.currentTarget.offsetLeft,
+            y: clientY - e.currentTarget.offsetTop,
           },
           mode
         );
       } else {
         const buttonPosition = e.currentTarget.getBoundingClientRect();
+
         const offsetInButton = {
-          x: buttonPosition.width - (e.clientX - buttonPosition.left),
-          y: buttonPosition.height - (e.clientY - buttonPosition.top),
+          x: buttonPosition.width - (clientX - buttonPosition.left),
+          y: buttonPosition.height - (clientY - buttonPosition.top),
         };
         const bounding = parentRef.current?.getBoundingClientRect();
         if (!bounding) return;
@@ -85,7 +92,9 @@ const Card: React.FC<CardProps> = ({ card, onCardSelect, onSelectEnd }) => {
         <div className="text-red-500 text-base whitespace-nowrap flex-1 text-ellipsis flex-shrink-0 overflow-hidden">
           {owner}
         </div>
-        <button className="material-icons ">close</button>
+        <button className="material-icons" onClick={onDelete}>
+          close
+        </button>
       </div>
       <div className="w-full flex-grow">{text}</div>
       <div className="w-full flex justify-end">
