@@ -25,8 +25,11 @@ const SignUp = () => {
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div className="w-1/3 h-auto p-10 bg-blue-dark rounded-3xl flex justify-center flex-col gap-3 items-center">
-        <form onSubmit={() => createUser(email, password)}>
+      <div className="w-full md:w-1/3 h-auto p-10 bg-blue-dark rounded-3xl flex justify-center flex-col gap-3 items-center">
+        <form
+          className="w-full h-full"
+          onSubmit={() => createUser(email, password)}
+        >
           <TextInput
             label="Email"
             type="email"
@@ -41,7 +44,7 @@ const SignUp = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <div className="flex flex-col items-stretch gap-3">
-            <Button className="mw-full md:mw-1/2 " type="submit">
+            <Button className="w-full md:w-1/2 " type="submit">
               Sign up
             </Button>
           </div>

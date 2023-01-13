@@ -1,26 +1,40 @@
 import React from "react";
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+type InputProps = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>;
+
+interface Props extends InputProps {
   label?: string;
   error?: string;
+  type?: InputProps["type"] | "textarea";
+  containerClassName?: string;
+  children?: React.ReactNode;
 }
 
-const TextInput: React.FC<Props> = ({ label, error, className, ...rest }) => {
+const TextInput: React.FC<Props> = ({
+  label,
+  error,
+  className,
+  containerClassName,
+  children,
+  ...rest
+}) => {
   return (
-    <div className="w-full">
+    <div className={`w-full ${containerClassName}`}>
       <label
-        className={`flex flex-col gap-2 text-white text-2xl w-full ${className}`}
+        className={`flex flex-col gap-2 text-white text-lg w-full ${className}`}
       >
         <span>{label}</span>
-        <input
-          className="h-20 p-2 rounded-md bg-blue-dark border-white border"
-          type="text"
-          {...rest}
-        />
+        <div className="w-full flex flex-nowrap">
+          {children}
+          <input
+            className="rounded w-full p-2 -md h-14 bg-blue-dark border-white border"
+            type="text"
+            {...rest}
+          />
+        </div>
       </label>
       {error && <span className="text-red-500 text-sm">{error}</span>}
     </div>
