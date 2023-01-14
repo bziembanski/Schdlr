@@ -26,6 +26,7 @@ import collectionToData from "../utils/collectionToData";
 import firestoreApp from "../firestoreApp";
 import { getAuth } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useTitleContext } from "../contexts/titleContext";
 
 const auth = getAuth(firestoreApp);
 
@@ -58,15 +59,25 @@ const getCardChange = (
 const Board: React.FC = () => {
   const [user] = useAuthState(auth);
   const { id = "" } = useParams();
-  const navigate = useNavigate();
+  const [board] = useDocumentData(
+    doc(getFirestore(firestoreApp), "boards", id)
+  );
   const [cardsCol] = useCollection(
     query(collection(getFirestore(firestoreApp), `boards/${id}/cards`))
   );
   const [cards, setCards] = useState<CardType[]>([]);
+  const [, setTitle] = useTitleContext();
 
   useEffect(() => {
     setCards(collectionToData(cardsCol));
   }, [cardsCol]);
+
+  useEffect(() => {
+    setTitle(board?.name);
+    return () => {
+      setTitle(undefined);
+    };
+  }, [board?.name]);
 
   const [movementDetails, setMovementDetails] = useState<MovementDetails>();
 
@@ -133,13 +144,7 @@ const Board: React.FC = () => {
         onMouseMove(e.touches[0]);
       }}
     >
-      <div className="flex gap-2 fixed top-4 left-2 text-blue-dark">
-        <button
-          className="material-icons text-3xl md:text-4xl"
-          onClick={() => navigate("/")}
-        >
-          arrow_back
-        </button>
+      <div className="flex gap-2 fixed top-5 left-16 text-blue-dark">
         <button
           className="material-icons text-3xl md:text-4xl"
           onClick={() => addCard()}
