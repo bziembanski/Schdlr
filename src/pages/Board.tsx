@@ -136,6 +136,19 @@ const Board: React.FC = () => {
     updateDoc(docRef, card);
   };
 
+  const onCardTextChange = (cardId: string, text: string) => {
+    const card = cards.find((card) => card.id == cardId);
+    if (!card) return;
+    const docRef = doc(
+      getFirestore(firestoreApp),
+      "boards",
+      id,
+      "cards",
+      cardId
+    );
+    updateDoc(docRef, { ...card, text: text });
+  };
+
   return (
     <div
       className="w-full h-full relative"
@@ -159,6 +172,7 @@ const Board: React.FC = () => {
           onCardSelect={onCardSelect}
           onSelectEnd={onCardSelectEnd}
           onDelete={deleteCard(card.id)}
+          onTextEdit={onCardTextChange}
         />
       ))}
     </div>

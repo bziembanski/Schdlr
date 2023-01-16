@@ -1,4 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+import Textarea from "./Textarea";
 
 export type Cords = {
   x: number;
@@ -23,6 +25,7 @@ export type CardProps = {
   onSelectEnd: () => void;
   onCardSelect: (id: string, offset: Cords, mode: MovementMode) => void;
   onDelete: () => void;
+  onTextEdit: (id: string, text: string) => void;
 };
 
 export type EventParams = Pick<
@@ -35,9 +38,23 @@ const Card: React.FC<CardProps> = ({
   onCardSelect,
   onSelectEnd,
   onDelete,
+  onTextEdit,
 }) => {
   const { id, owner, position, size, text } = card;
+  const [internalText, setInternalText] = useState(text);
+  const [isEdit, setIsEdit] = useState(false);
   const parentRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setInternalText(text);
+  }, [text]);
+
+  const toggleEdit = () => {
+    setIsEdit((edit) => {
+      onTextEdit(id, internalText);
+      return !edit;
+    });
+  };
 
   const onMouseDown =
     (mode: MovementMode) =>
@@ -46,6 +63,7 @@ const Card: React.FC<CardProps> = ({
         React.TouchEvent<HTMLDialogElement | HTMLButtonElement>
     ) => {
       e.stopPropagation();
+      if (isEdit) return;
       const { clientX, clientY } = e.touches ? e.touches[0] : e;
       if (mode === MovementMode.Moving) {
         onCardSelect(
@@ -96,10 +114,27 @@ const Card: React.FC<CardProps> = ({
           close
         </button>
       </div>
-      <div className="w-full flex-grow">{text}</div>
-      <div className="w-full flex justify-end">
+      <div className="w-full flex-grow">
+        {isEdit ? (
+          <Textarea
+            value={internalText}
+            onChange={(e) => {
+              setInternalText(e.target.value);
+            }}
+            containerClassName="h-full max-h-full"
+            className="text-sm h-full overflow-hidden"
+            inputClassName="sm:bg-[#fff] k text-blue-500 h-full  resize-none"
+          />
+        ) : (
+          text
+        )}
+      </div>
+      <div className="w-full flex">
+        <button className="material-icons" onClick={toggleEdit}>
+          edit
+        </button>
         <button
-          className="material-icons rotate-90"
+          className="material-icons rotate-90 ml-auto"
           onMouseDown={onMouseDown(MovementMode.Resizing)}
           onTouchStart={onMouseDown(MovementMode.Resizing)}
         >

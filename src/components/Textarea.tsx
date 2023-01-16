@@ -1,23 +1,24 @@
 import React from "react";
 
 type InputProps = React.DetailedHTMLProps<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  HTMLTextAreaElement
 >;
 
 interface Props extends InputProps {
   label?: string;
   error?: string;
-  type?: InputProps["type"];
   containerClassName?: string;
+  inputClassName?: string;
   children?: React.ReactNode;
 }
 
-const TextInput: React.FC<Props> = ({
+const Textarea: React.FC<Props> = ({
   label,
   error,
   className,
   containerClassName,
+  inputClassName,
   children,
   ...rest
 }) => {
@@ -27,11 +28,10 @@ const TextInput: React.FC<Props> = ({
         className={`flex flex-col gap-2 text-white text-lg w-full ${className}`}
       >
         <span>{label}</span>
-        <div className="w-full flex flex-nowrap">
+        <div className="w-full flex flex-nowrap h-full">
           {children}
-          <input
-            className="rounded w-full p-2 -md h-14 bg-blue-dark border-white border"
-            type="text"
+          <textarea
+            className={`rounded w-full p-2 -md min-h-14 bg-blue-dark border-white border ${inputClassName}`}
             {...rest}
           />
         </div>
@@ -41,4 +41,4 @@ const TextInput: React.FC<Props> = ({
   );
 };
 
-export default TextInput;
+export default Textarea;

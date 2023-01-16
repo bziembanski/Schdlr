@@ -3,6 +3,7 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
+import Textarea from "../components/Textarea";
 import firestoreApp from "../firestoreApp";
 import { getAuth } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -64,10 +65,10 @@ const NewFridge = () => {
             onChange={(e) => setName(e.target.value)}
             error={error}
           />
-          <TextInput
+          <Textarea
             label="Fridge Description"
-            type="text"
             value={description}
+            rows={5}
             onChange={(e) => setDescription(e.target.value)}
           />
         </form>
