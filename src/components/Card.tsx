@@ -160,6 +160,15 @@ const Card: React.FC<CardProps> = ({
           mic
         </button>
         <button
+          className="material-icons"
+          onClick={() => {
+            const tellMeThis = new SpeechSynthesisUtterance(internalText);
+            window.speechSynthesis.speak(tellMeThis);
+          }}
+        >
+          volume_up
+        </button>
+        <button
           className="material-icons rotate-90 ml-auto"
           onMouseDown={onMouseDown(MovementMode.Resizing)}
           onTouchStart={onMouseDown(MovementMode.Resizing)}
