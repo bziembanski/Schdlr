@@ -1,4 +1,5 @@
 import "./index.css";
+import "regenerator-runtime/runtime";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 

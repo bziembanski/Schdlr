@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 import Textarea from "./Textarea";
 
@@ -42,12 +45,22 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const { id, owner, position, size, text } = card;
   const [internalText, setInternalText] = useState(text);
+  const { transcript, listening, finalTranscript, resetTranscript } =
+    useSpeechRecognition();
   const [isEdit, setIsEdit] = useState(false);
   const parentRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setInternalText(text);
   }, [text]);
+
+  useEffect(() => {
+    if (!listening && isEdit) {
+      onTextEdit(id, transcript);
+      setIsEdit(false);
+      resetTranscript();
+    }
+  }, [listening]);
 
   const toggleEdit = () => {
     setIsEdit((edit) => {
@@ -117,9 +130,9 @@ const Card: React.FC<CardProps> = ({
       <div className="w-full flex-grow">
         {isEdit ? (
           <Textarea
-            value={internalText}
+            value={listening ? transcript : internalText}
             onChange={(e) => {
-              setInternalText(e.target.value);
+              if (!listening) setInternalText(e.target.value);
             }}
             containerClassName="h-full max-h-full"
             className="text-sm h-full overflow-hidden"
@@ -132,6 +145,19 @@ const Card: React.FC<CardProps> = ({
       <div className="w-full flex">
         <button className="material-icons" onClick={toggleEdit}>
           edit
+        </button>
+        <button
+          className="material-icons"
+          onClick={() => {
+            if (listening) {
+              SpeechRecognition.stopListening();
+            } else {
+              setIsEdit(true);
+              SpeechRecognition.startListening({ continuous: true });
+            }
+          }}
+        >
+          mic
         </button>
         <button
           className="material-icons rotate-90 ml-auto"
