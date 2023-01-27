@@ -28,7 +28,7 @@ const Auth = () => {
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div className="w-1/3 h-auto p-10 bg-blue-dark rounded-3xl flex justify-center flex-col gap-3 items-center shadow-lg">
+      <div className="w-full md:w-1/3 h-auto p-10 bg-blue-dark rounded-3xl flex justify-center flex-col gap-3 items-center shadow-lg">
         <form
           onSubmit={(e) => {
             e.preventDefault();

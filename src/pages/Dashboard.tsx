@@ -1,4 +1,3 @@
-import { DocumentData, useAuthState } from "react-firebase-hooks/auth";
 import { QueryDocumentSnapshot, QuerySnapshot } from "firebase/firestore";
 import {
   collection,
@@ -17,6 +16,7 @@ import React from "react";
 import collectionToData from "../utils/collectionToData";
 import firestoreApp from "../firestoreApp";
 import { getAuth } from "@firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const auth = getAuth(firestoreApp);
 
@@ -71,7 +71,7 @@ const Dashboard = () => {
               {board.owner === user?.email ? (
                 <>
                   <span>Moja lodówka dzielona z: </span>
-                  {board.sharedUsers.map((user) => (
+                  {board.sharedUsers.map((user: any) => (
                     <span>{user}</span>
                   ))}
                 </>

@@ -7,7 +7,7 @@ import Drawer from "../components/Drawer";
 import { Outlet } from "react-router-dom";
 import firestoreApp from "../firestoreApp";
 import { getAuth } from "firebase/auth";
-import { useTitleContext } from "../contexts/titleContext";
+import { useTitleContext } from "../contexts/TitleContext";
 
 const auth = getAuth(firestoreApp);
 
@@ -24,7 +24,6 @@ const RequireAuth: React.FC = () => {
   if (!user) {
     return <Navigate to="/login" />;
   }
-  console.log(title);
   return (
     <div className="w-full h-full relative flex flex-col">
       <div className="w-full justify-end flex items-center gap-5">

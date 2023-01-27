@@ -5,7 +5,7 @@ import Card, {
   EventParams,
   MovementMode,
 } from "../components/Card";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   addDoc,
   collection,
@@ -20,13 +20,14 @@ import {
   useDocument,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
+import { useGesture, usePinch } from "@use-gesture/react";
 import { useNavigate, useParams } from "react-router";
 
 import collectionToData from "../utils/collectionToData";
 import firestoreApp from "../firestoreApp";
 import { getAuth } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useTitleContext } from "../contexts/titleContext";
+import { useTitleContext } from "../contexts/TitleContext";
 
 const auth = getAuth(firestoreApp);
 
@@ -39,19 +40,18 @@ type MovementDetails = {
 const getCardChange = (
   clientX: number,
   clientY: number,
-  details: MovementDetails
+  details: MovementDetails,
+  card: CardType
 ): Partial<CardType> => {
   const { offset, mode } = details;
 
-  const x = clientX - offset.x;
-  const y = clientY - offset.y;
   if (mode === MovementMode.Moving) {
     return {
-      position: { x, y },
+      position: { x: card.position.x - clientX, y: card.position.y - clientY },
     };
   } else {
     return {
-      size: { x, y },
+      size: { x: card.size.x - clientX, y: card.size.y - clientY },
     };
   }
 };
@@ -67,6 +67,42 @@ const Board: React.FC = () => {
   );
   const [cards, setCards] = useState<CardType[]>([]);
   const [, setTitle] = useTitleContext();
+  const [scrollTouchPos, setScrollTouchPos] = useState<Cords>();
+  const ref = useRef<HTMLDivElement>(null);
+  const [movementDetails, setMovementDetails] = useState<MovementDetails>();
+  const [scale, setScale] = useState(1);
+  const pinchRef = useGesture({
+    onPinch: ({ offset: [s, a] }) => {
+      setScale(s);
+    },
+    onTouchStart: (e) => {
+      setScrollTouchPos({
+        x: e.event.touches[0].clientX,
+        y: e.event.touches[0].clientY,
+      });
+    },
+    onTouchEnd: (e) => setScrollTouchPos(undefined),
+    onTouchMove: (e) => {
+      if (movementDetails) {
+        onMouseMove({
+          clientX: e.event.touches[0].clientX,
+          clientY: e.event.touches[0].clientY,
+        });
+      } else if (scrollTouchPos && ref.current) {
+        const touches = e.event.touches[0];
+        const deltaY = scrollTouchPos.y - touches.clientY;
+        const deltaX = scrollTouchPos.x - touches.clientX;
+
+        setScrollTouchPos({
+          x: touches.clientX,
+          y: touches.clientY,
+        });
+
+        ref.current.scrollTop += deltaY;
+        ref.current.scrollLeft += deltaX;
+      }
+    },
+  });
 
   useEffect(() => {
     setCards(collectionToData(cardsCol));
@@ -79,15 +115,20 @@ const Board: React.FC = () => {
     };
   }, [board?.name]);
 
-  const [movementDetails, setMovementDetails] = useState<MovementDetails>();
-
   const onMouseMove = (e: EventParams) => {
-    if (!movementDetails) return;
+    if (!movementDetails || !scrollTouchPos) return;
     const { id } = movementDetails;
     const currentCard = cards.find((card) => card.id === id);
     if (!currentCard) return;
-
-    const cardChange = getCardChange(e.clientX, e.clientY, movementDetails);
+    const x = scrollTouchPos.x - e.clientX;
+    const y = scrollTouchPos.y - e.clientY;
+    const cardChange = getCardChange(
+      x * (1 / scale),
+      y * (1 / scale),
+      movementDetails,
+      currentCard
+    );
+    setScrollTouchPos({ x: e.clientX, y: e.clientY });
 
     setCards((cards) =>
       cards.map((card) => {
@@ -99,14 +140,21 @@ const Board: React.FC = () => {
     );
   };
 
-  const onCardSelect = (id: string, offset: Cords, mode: MovementMode) => {
+  const onCardSelect = (
+    id: string,
+    offset: Cords,
+    mode: MovementMode,
+    { x, y }: { x: number; y: number }
+  ) => {
     setMovementDetails({ id, offset, mode });
+    setScrollTouchPos({ x, y });
   };
 
   const onCardSelectEnd = async () => {
     if (!movementDetails) return;
     syncCard(movementDetails.id);
     setMovementDetails(undefined);
+    setScrollTouchPos(undefined);
   };
 
   const addCard = async () => {
@@ -151,11 +199,8 @@ const Board: React.FC = () => {
 
   return (
     <div
-      className="w-full h-full relative"
-      onMouseMove={onMouseMove}
-      onTouchMove={(e) => {
-        onMouseMove(e.touches[0]);
-      }}
+      className="w-full h-full overflow-auto  scrollbar-thin  scrollbar-thumb-blue-dark scrollbar-track-transparent"
+      ref={ref}
     >
       <div className="flex gap-2 fixed top-5 left-16 text-blue-dark">
         <button
@@ -165,16 +210,23 @@ const Board: React.FC = () => {
           add
         </button>
       </div>
-      {Array.from(cards.values()).map((card) => (
-        <Card
-          card={card}
-          key={card.id}
-          onCardSelect={onCardSelect}
-          onSelectEnd={onCardSelectEnd}
-          onDelete={deleteCard(card.id)}
-          onTextEdit={onCardTextChange}
-        />
-      ))}
+      <div
+        className="relative touch-none w-[5000px] h-[5000px]"
+        onMouseMove={onMouseMove}
+        style={{ zoom: scale }}
+        {...pinchRef()}
+      >
+        {Array.from(cards.values()).map((card) => (
+          <Card
+            card={card}
+            key={card.id}
+            onCardSelect={onCardSelect}
+            onSelectEnd={onCardSelectEnd}
+            onDelete={deleteCard(card.id)}
+            onTextEdit={onCardTextChange}
+          />
+        ))}
+      </div>
     </div>
   );
 };

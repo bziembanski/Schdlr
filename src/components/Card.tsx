@@ -26,14 +26,19 @@ export type CardType = {
 export type CardProps = {
   card: CardType;
   onSelectEnd: () => void;
-  onCardSelect: (id: string, offset: Cords, mode: MovementMode) => void;
+  onCardSelect: (
+    id: string,
+    offset: Cords,
+    mode: MovementMode,
+    { x, y }: { x: number; y: number }
+  ) => void;
   onDelete: () => void;
   onTextEdit: (id: string, text: string) => void;
 };
 
 export type EventParams = Pick<
   React.MouseEvent<HTMLDivElement, MouseEvent>,
-  "clientX" | "clientY" | "target"
+  "clientX" | "clientY"
 >;
 
 const Card: React.FC<CardProps> = ({
@@ -85,7 +90,8 @@ const Card: React.FC<CardProps> = ({
             x: clientX - e.currentTarget.offsetLeft,
             y: clientY - e.currentTarget.offsetTop,
           },
-          mode
+          mode,
+          { x: clientX, y: clientY }
         );
       } else {
         const buttonPosition = e.currentTarget.getBoundingClientRect();
@@ -100,7 +106,10 @@ const Card: React.FC<CardProps> = ({
           x: bounding.left - offsetInButton.x,
           y: bounding.top - offsetInButton.y,
         };
-        onCardSelect(card.id, actionOffset, mode);
+        onCardSelect(card.id, actionOffset, mode, {
+          x: clientX,
+          y: clientY,
+        });
       }
     };
 
@@ -114,8 +123,10 @@ const Card: React.FC<CardProps> = ({
         top: position.y,
       }}
       ref={parentRef}
+      //@ts-ignore
       onMouseDown={onMouseDown(MovementMode.Moving)}
       onMouseUp={onSelectEnd}
+      //@ts-ignore
       onTouchStart={onMouseDown(MovementMode.Moving)}
       onTouchEnd={onSelectEnd}
     >
@@ -136,7 +147,7 @@ const Card: React.FC<CardProps> = ({
             }}
             containerClassName="h-full max-h-full"
             className="text-sm h-full overflow-hidden"
-            inputClassName="sm:bg-[#fff] k text-blue-500 h-full  resize-none"
+            inputClassName="!bg-[#fff] k text-blue-500 h-full  resize-none"
           />
         ) : (
           text
@@ -170,7 +181,9 @@ const Card: React.FC<CardProps> = ({
         </button>
         <button
           className="material-icons rotate-90 ml-auto"
+          //@ts-ignore
           onMouseDown={onMouseDown(MovementMode.Resizing)}
+          //@ts-ignore
           onTouchStart={onMouseDown(MovementMode.Resizing)}
         >
           open_in_full
