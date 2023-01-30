@@ -7,7 +7,7 @@ const MainLayout: React.FC = () => {
 
   return (
     <div
-      className="w-screen h-screen overflow-hidden bg-blue-light font-body p-5 pb-0"
+      className="w-screen h-screen overflow-hidden bg-blue-light font-body pb-0"
       onTouchStart={(e) => {
         if (e.touches.length === 3) {
           setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });

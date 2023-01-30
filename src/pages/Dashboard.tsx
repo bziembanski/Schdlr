@@ -22,7 +22,7 @@ const auth = getAuth(firestoreApp);
 
 const Dashboard = () => {
   const [user] = useAuthState(auth);
-  const [myBoardsCol, loading, error] = useCollection(
+  const [myBoardsCol] = useCollection(
     query(
       collection(getFirestore(firestoreApp), "boards"),
       where("owner", "==", user?.email)
@@ -47,9 +47,12 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex h-full w-full items-center px-4 md:px-20 overflow-auto pt-20">
-      <div className="flex gap-10 h-full overflow-y-auto overflow-x-hidden flex-col w-full md:w-auto md:flex-row md:flex-wrap items-center content-center">
-        <NavLink to="/new" className="w-full md:w-64">
+    <div className="flex h-full w-full items-center px-4  overflow-auto pt-20">
+      <div
+        className="flex justify-around content-start lg:content-center items-start gap-10 h-full w-full overflow-y-auto overflow-x-hidden 
+      flex-wrap  scrollbar-thin  scrollbar-thumb-blue-dark scrollbar-track-transparent pb-10 px-10 md:px-0"
+      >
+        <NavLink to="/new" className="w-full md:w-64 h-96 block">
           <div className="h-96 bg-blue-dark w-full rounded-3xl shadow-xl flex flex-col shrink-0">
             <div className="bg-white h-1/3 rounded-3xl flex items-center justify-center text-blue-dark font-bold">
               <span className="material-icons text-5xl">add</span>
@@ -61,7 +64,7 @@ const Dashboard = () => {
         </NavLink>
         {data.map((board) => (
           <div
-            className="h-96  bg-blue-dark w-full md:w-64 rounded-3xl shadow-xl flex flex-col shrink-0 mb-5 md:mb-0"
+            className="h-96  bg-blue-dark w-full md:w-64 rounded-3xl shadow-xl flex flex-col shrink-0"
             key={board.id}
           >
             <div className="bg-white h-1/3 rounded-3xl flex items-center justify-center text-blue-dark font-bold">
@@ -72,7 +75,7 @@ const Dashboard = () => {
                 <>
                   <span>Moja lodówka dzielona z: </span>
                   {board.sharedUsers.map((user: any) => (
-                    <span>{user}</span>
+                    <span key={user}>{user}</span>
                   ))}
                 </>
               ) : (

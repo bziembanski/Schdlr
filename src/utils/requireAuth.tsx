@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 
@@ -17,6 +17,11 @@ const RequireAuth: React.FC = () => {
   const [signOut] = useSignOut(auth);
   const [isOpen, setIsOpen] = useState(false);
   const [title] = useTitleContext();
+  const location = useLocation();
+
+  const boardId = location.pathname.startsWith("/board")
+    ? location.pathname.split("/")[2]
+    : undefined;
 
   if (loading) {
     return <div>Loading</div>;
@@ -26,7 +31,7 @@ const RequireAuth: React.FC = () => {
   }
   return (
     <div className="w-full h-full relative flex flex-col">
-      <div className="w-full justify-end flex items-center gap-5">
+      <div className="w-full justify-end flex items-center gap-5 p-5">
         <button
           className="material-icons text-3xl md:text-4xl mr-auto text-blue-dark"
           onClick={() => navigate("/")}
@@ -52,6 +57,11 @@ const RequireAuth: React.FC = () => {
         >
           Sign Out
         </Button>
+        {boardId && (
+          <NavLink to={`edit/${boardId}`} className="w-full">
+            <Button className="w-full">Edit board</Button>
+          </NavLink>
+        )}
       </Drawer>
       <Outlet />
     </div>
