@@ -31,7 +31,7 @@ const Textarea: React.FC<Props> = ({
         <div className="w-full flex flex-nowrap h-full">
           {children}
           <textarea
-            className={`rounded w-full p-2 -md min-h-14 bg-blue-dark border-white border ${inputClassName}`}
+            className={`rounded w-full p-2 -md min-h-14 bg-blue-dark border-white border disabled:bg-gray-500 ${inputClassName}`}
             {...rest}
           />
         </div>

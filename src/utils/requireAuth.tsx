@@ -1,5 +1,6 @@
 import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 
 import Button from "../components/Button";
@@ -58,9 +59,22 @@ const RequireAuth: React.FC = () => {
           Sign Out
         </Button>
         {boardId && (
-          <NavLink to={`edit/${boardId}`} className="w-full">
-            <Button className="w-full">Edit board</Button>
-          </NavLink>
+          <>
+            <NavLink to={`edit/${boardId}`} className="w-full">
+              <Button className="w-full">Edit board</Button>
+            </NavLink>
+
+            <Button
+              className="w-full"
+              onClick={() => {
+                deleteDoc(doc(getFirestore(firestoreApp), "boards", boardId));
+                setIsOpen(false);
+                navigate(`/`);
+              }}
+            >
+              Delete board
+            </Button>
+          </>
         )}
       </Drawer>
       <Outlet />

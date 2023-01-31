@@ -22,7 +22,7 @@ const Drawer: React.FC<Props> = ({ children, isOpen, setIsOpen }) => {
           (isOpen ? " translate-x-0 " : " translate-x-full ")
         }
       >
-        <article className="relative w-screen max-w-lg pb-10 flex flex-col space-y-6  h-full bg-blue-dark p-5">
+        <article className="relative w-screen max-w-lg pb-10 flex flex-col space-y-6  h-full bg-blue-dark p-5 pr-10">
           <span
             className="material-icons self-end text-white"
             onClick={() => setIsOpen(false)}

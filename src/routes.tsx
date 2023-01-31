@@ -1,3 +1,5 @@
+import { Navigate, RouteObject } from "react-router";
+
 import Auth from "./pages/Auth";
 import Board from "./pages/Board";
 import Dashboard from "./pages/Dashboard";
@@ -5,7 +7,6 @@ import EditFridge from "./pages/EditFridge";
 import MainLayout from "./layouts/main";
 import NewFridge from "./pages/NewFridge";
 import RequireAuth from "./utils/requireAuth";
-import { RouteObject } from "react-router";
 import SignUp from "./pages/SignUp";
 
 const routes: RouteObject[] = [
@@ -35,6 +36,7 @@ const routes: RouteObject[] = [
       },
       { path: "login", element: <Auth /> },
       { path: "signup", element: <SignUp /> },
+      { path: "*", element: <Navigate to="/" /> },
     ],
   },
 ];
