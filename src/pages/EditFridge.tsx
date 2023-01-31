@@ -22,7 +22,7 @@ export type FridgeType = {
 const EditFridge = () => {
   const [user] = useAuthState(auth);
   const { id = "" } = useParams();
-  const [board] = useDocumentData(
+  const [fridge] = useDocumentData(
     doc(getFirestore(firestoreApp), "boards", id)
   );
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ const EditFridge = () => {
   const [users, setUsers] = useState<string[]>([]);
 
   useEffect(() => {
-    if (board) setUsers(board.sharedUsers);
-  }, [board?.sharedUsers]);
+    if (fridge) setUsers(fridge.sharedUsers);
+  }, [fridge?.sharedUsers]);
 
   const editFridge = async () => {
     const fridge = {
@@ -56,12 +56,12 @@ const EditFridge = () => {
           <TextInput
             label="Fridge Name"
             type="text"
-            value={board?.name}
+            value={fridge?.name}
             disabled
           />
           <Textarea
             label="Fridge Description"
-            value={board?.description}
+            value={fridge?.description}
             disabled
             rows={5}
           />

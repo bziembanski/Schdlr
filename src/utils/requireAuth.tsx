@@ -20,7 +20,7 @@ const RequireAuth: React.FC = () => {
   const [title] = useTitleContext();
   const location = useLocation();
 
-  const boardId = location.pathname.startsWith("/board")
+  const boardId = location.pathname.startsWith("/fridge")
     ? location.pathname.split("/")[2]
     : undefined;
 
@@ -60,8 +60,12 @@ const RequireAuth: React.FC = () => {
         </Button>
         {boardId && (
           <>
-            <NavLink to={`edit/${boardId}`} className="w-full">
-              <Button className="w-full">Edit board</Button>
+            <NavLink
+              to={`edit/${boardId}`}
+              onClick={() => setIsOpen(false)}
+              className="w-full"
+            >
+              <Button className="w-full">Edit fridge</Button>
             </NavLink>
 
             <Button
@@ -72,7 +76,7 @@ const RequireAuth: React.FC = () => {
                 navigate(`/`);
               }}
             >
-              Delete board
+              Delete fridge
             </Button>
           </>
         )}

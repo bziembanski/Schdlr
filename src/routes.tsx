@@ -1,9 +1,9 @@
 import { Navigate, RouteObject } from "react-router";
 
 import Auth from "./pages/Auth";
-import Board from "./pages/Board";
 import Dashboard from "./pages/Dashboard";
 import EditFridge from "./pages/EditFridge";
+import Fridge from "./pages/Fridge";
 import MainLayout from "./layouts/main";
 import NewFridge from "./pages/NewFridge";
 import RequireAuth from "./utils/requireAuth";
@@ -21,8 +21,8 @@ const routes: RouteObject[] = [
             element: <Dashboard />,
           },
           {
-            path: "board/:id",
-            element: <Board />,
+            path: "fridge/:id",
+            element: <Fridge />,
           },
           {
             path: "new",

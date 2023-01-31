@@ -56,10 +56,10 @@ const getCardChange = (
   }
 };
 
-const Board: React.FC = () => {
+const Fridge: React.FC = () => {
   const [user] = useAuthState(auth);
   const { id = "" } = useParams();
-  const [board] = useDocumentData(
+  const [fridge] = useDocumentData(
     doc(getFirestore(firestoreApp), "boards", id)
   );
   const [cardsCol] = useCollection(
@@ -109,11 +109,11 @@ const Board: React.FC = () => {
   }, [cardsCol]);
 
   useEffect(() => {
-    setTitle(board?.name);
+    setTitle(fridge?.name);
     return () => {
       setTitle(undefined);
     };
-  }, [board?.name]);
+  }, [fridge?.name]);
 
   const onMouseMove = (e: EventParams) => {
     if (!movementDetails || !scrollTouchPos) return;
@@ -231,4 +231,4 @@ const Board: React.FC = () => {
   );
 };
 
-export default Board;
+export default Fridge;

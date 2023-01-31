@@ -43,7 +43,7 @@ const NewFridge = () => {
       collection(getFirestore(firestoreApp), "boards"),
       fridge
     );
-    navigate(`/board/${result.id}`);
+    navigate(`/fridge/${result.id}`);
     return;
   };
 

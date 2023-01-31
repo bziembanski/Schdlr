@@ -17,8 +17,8 @@ const collectionToData = (
   if (!snap) return [];
   const boards: any[] = [];
   snap.forEach((doc) => {
-    const board = docToData(doc);
-    boards.push(board);
+    const fridge = docToData(doc);
+    boards.push(fridge);
   });
 
   return boards;

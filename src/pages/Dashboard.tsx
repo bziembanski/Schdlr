@@ -62,26 +62,26 @@ const Dashboard = () => {
             </div>
           </div>
         </NavLink>
-        {data.map((board) => (
+        {data.map((fridge) => (
           <div
             className="h-96  bg-blue-dark w-full md:w-64 rounded-3xl shadow-xl flex flex-col shrink-0"
-            key={board.id}
+            key={fridge.id}
           >
             <div className="bg-white h-1/3 rounded-3xl flex items-center justify-center text-blue-dark font-bold">
-              <NavLink to={`board/${board.id}`}>{board.name}</NavLink>
+              <NavLink to={`fridge/${fridge.id}`}>{fridge.name}</NavLink>
             </div>
             <div className="text-white font-bold flex flex-grow flex-col justify-center items-center text-center">
-              {board.owner === user?.email ? (
+              {fridge.owner === user?.email ? (
                 <>
                   <span>Moja lodówka dzielona z: </span>
-                  {board.sharedUsers.map((user: any) => (
+                  {fridge.sharedUsers.map((user: any) => (
                     <span key={user}>{user}</span>
                   ))}
                 </>
               ) : (
                 <>
                   <span>Lodówka dzielona przez: </span>
-                  <span>{board.owner}</span>
+                  <span>{fridge.owner}</span>
                 </>
               )}
             </div>
