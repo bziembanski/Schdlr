@@ -28,6 +28,7 @@ const EditFridge = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [users, setUsers] = useState<string[]>([]);
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (fridge) setUsers(fridge.sharedUsers);
@@ -64,14 +65,20 @@ const EditFridge = () => {
             value={fridge?.description}
             disabled
             rows={5}
+            inputClassName="resize-none"
           />
         </form>
         <form
           className="w-full h-full flex flex-col gap-2 text-white"
           onSubmit={(e) => {
             e.preventDefault();
-            setUsers((e) => [email, ...e]);
-            setEmail("");
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+              setUsers((e) => Array.from(new Set([email, ...e])));
+              setEmail("");
+              setEmailError(undefined);
+            } else {
+              setEmailError("Not a valid email");
+            }
           }}
         >
           <div className="flex flex-nowrap overflow-hidden">
@@ -83,6 +90,7 @@ const EditFridge = () => {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              error={emailError}
             >
               <button className="material-icons self-end text-4xl relative bottom-2">
                 add

@@ -26,6 +26,7 @@ const NewFridge = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string>();
   const [users, setUsers] = useState<string[]>([]);
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
 
   const createFridge = async () => {
     setError(undefined);
@@ -72,12 +73,18 @@ const NewFridge = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </form>
+
         <form
           className="w-full h-full flex flex-col gap-2 text-white"
           onSubmit={(e) => {
             e.preventDefault();
-            setUsers((e) => [email, ...e]);
-            setEmail("");
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+              setUsers((e) => Array.from(new Set([email, ...e])));
+              setEmail("");
+              setEmailError(undefined);
+            } else {
+              setEmailError("Not a valid email");
+            }
           }}
         >
           <div className="flex flex-nowrap overflow-hidden">
@@ -89,6 +96,7 @@ const NewFridge = () => {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              error={error}
             >
               <button className="material-icons self-end text-4xl relative bottom-2">
                 add
